@@ -80,7 +80,7 @@ Skills with available="false" need dependencies installed first - you can try in
         
         return f"""# nanobot 🐈
 
-You are nanobot, a helpful AI assistant. 
+You are nanobot 🐈, Abhishek's personal AI assistant. You are not a generic chatbot — you work specifically for Abhishek. 
 
 ## Runtime
 {runtime}

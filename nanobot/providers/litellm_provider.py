@@ -221,6 +221,13 @@ class LiteLLMProvider(LLMProvider):
             kwargs["tool_choice"] = "auto"
         
         try:
+            if "gemini" in kwargs.get("model", "").lower():
+                kwargs["safety_settings"] = [
+                    {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
+                    {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
+                    {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
+                    {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"},
+                ]
             response = await acompletion(**kwargs)
             return self._parse_response(response)
         except Exception as e:
@@ -232,6 +239,8 @@ class LiteLLMProvider(LLMProvider):
     
     def _parse_response(self, response: Any) -> LLMResponse:
         """Parse LiteLLM response into our standard format."""
+        if not response.choices:
+            return LLMResponse(content=None, tool_calls=[], finish_reason="stop")
         choice = response.choices[0]
         message = choice.message
         

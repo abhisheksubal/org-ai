@@ -97,8 +97,8 @@ class CronTool(Tool):
             return "Error: message is required for add"
         if not self._channel or not self._chat_id:
             return "Error: no session context (channel/chat_id)"
-        if tz and not cron_expr:
-            return "Error: tz can only be used with cron_expr"
+        if tz and not cron_expr and not at:
+            return "Error: tz can only be used with cron_expr or at"
         if tz:
             from zoneinfo import ZoneInfo
             try:
@@ -115,6 +115,9 @@ class CronTool(Tool):
         elif at:
             from datetime import datetime
             dt = datetime.fromisoformat(at)
+            if tz and dt.tzinfo is None:
+                from zoneinfo import ZoneInfo
+                dt = dt.replace(tzinfo=ZoneInfo(tz))
             at_ms = int(dt.timestamp() * 1000)
             schedule = CronSchedule(kind="at", at_ms=at_ms)
             delete_after = True
