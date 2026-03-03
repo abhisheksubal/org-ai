@@ -42,6 +42,7 @@ jobs:
           # Setup Node.js bridge environment
           cd bridge
           npm install
+          npm run build
           
           # Restart systemd daemons (we will create these later)
           sudo systemctl daemon-reload
