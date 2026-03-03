@@ -1,0 +1,51 @@
+name: Deploy Nanobot
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Deploy to Server via rsync
+      uses: easingthemes/ssh-deploy@main
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        REMOTE_HOST: ${{ secrets.SSH_HOST }}
+        REMOTE_USER: ${{ secrets.SSH_USER }}
+        TARGET: /home/ubuntu/nanobot_production/
+        EXCLUDE: "/.git/, /node_modules/, /venv/, /.env"
+        # The org-ai repo sits at the root, so we sync the root directory
+        SOURCE: "./"
+
+    - name: Restart Services and Install Dependencies
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          cd /home/ubuntu/nanobot_production
+          
+          # Setup Python environment
+          python3 -m venv venv
+          source venv/bin/activate
+          pip install -r nanobot/requirements.txt
+          
+          # Setup Node.js bridge environment
+          cd bridge
+          npm install
+          
+          # Restart systemd daemons (we will create these later)
+          sudo systemctl daemon-reload
+          sudo systemctl restart nanobot.service || true
+          sudo systemctl restart nanobot-bridge.service || true
+          
+          echo "Deployment and restart complete!"
