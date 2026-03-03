@@ -37,7 +37,7 @@ jobs:
           # Setup Python environment
           python3 -m venv venv
           source venv/bin/activate
-          pip install -r nanobot/requirements.txt
+          pip install -e .
           
           # Setup Node.js bridge environment
           cd bridge
