@@ -39,9 +39,10 @@ jobs:
           source venv/bin/activate
           pip install -e .
           
-          # Setup Node.js bridge environment
+          # Setup Node.js bridge environment & Install MCP dependencies locally
           cd bridge
           npm install
+          npm install @googleworkspace/cli
           npm run build
           
           # Restart systemd daemons (we will create these later)
