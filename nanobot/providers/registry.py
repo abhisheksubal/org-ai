@@ -378,6 +378,24 @@ PROVIDERS: tuple[ProviderSpec, ...] = (
 
     # === Auxiliary (not a primary LLM provider) ============================
 
+    # Sarvam AI: India-centric foundational models.
+    ProviderSpec(
+        name="sarvam",
+        keywords=("sarvam",),
+        env_key="SARVAM_API_KEY",
+        display_name="Sarvam AI",
+        litellm_prefix="sarvam",            # sarvam-105b-v1 → sarvam/sarvam-105b-v1
+        skip_prefixes=("sarvam/",),
+        env_extras=(),
+        is_gateway=False,
+        is_local=False,
+        detect_by_key_prefix="",
+        detect_by_base_keyword="",
+        default_api_base="",
+        strip_model_prefix=False,
+        model_overrides=(),
+    ),
+
     # Groq: mainly used for Whisper voice transcription, also usable for LLM.
     # Needs "groq/" prefix for LiteLLM routing. Placed last — it rarely wins fallback.
     ProviderSpec(
