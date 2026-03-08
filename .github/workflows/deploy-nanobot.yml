@@ -42,7 +42,7 @@ jobs:
           # Setup Node.js bridge environment & Install MCP dependencies locally
           cd bridge
           npm install
-          npm install @googleworkspace/cli
+          npm install @googleworkspace/cli@0.7.0
           npm run build
           
           # Restart systemd daemons (we will create these later)
